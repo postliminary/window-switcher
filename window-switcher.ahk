@@ -38,23 +38,7 @@ if (WinCount > 1)
 	}
 	else 
 	{
-		WinActivate, ahk_exe %ActiveProcess%
+		WinActivateBottom, ahk_exe %ActiveProcess%
 	}
 }
-
-return
-
-!+w::
-r = Windows:`n
-WinGet ActiveProcess, ProcessName, A
-r .= ActiveProcess . "`n"
-WinGet, List, List, % "ahk_exe " ActiveProcess
-Loop, % List
-{
-	id := List%A_Index%
-	WinGetTitle wt, ahk_id %id%
-	WinGetClass wc, ahk_id %id%
-	r .= A_Index . ". " . wt . " " . wc . "`n"
-}
-MsgBox %r%
 return
