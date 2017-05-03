@@ -8,17 +8,20 @@ if not A_IsAdmin
 	ExitApp
 }
 
-!`::    ; Next window
+!`::	; Next window
 WinGet ActiveProcess, ProcessName, A
-WinGet WinCount, Count, % "ahk_exe " ActiveProcess
-if (WinCount > 1) {
+WinGet WinCount, Count, ahk_exe %ActiveProcess%
+if (WinCount > 1) 
+{
 	WinSet, Bottom,, A
 	; Special handling for explorer windows
-	if (ActiveProcess = "Explorer.EXE") {
+	if (ActiveProcess = "Explorer.EXE") 
+	{
 		WinActivate, ahk_class CabinetWClass
 	}
-	else {
-		WinActivate, % "ahk_exe " ActiveProcess
+	else 
+	{
+		WinActivate, ahk_exe %ActiveProcess%
 	}
 }
 return
