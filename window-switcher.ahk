@@ -26,9 +26,22 @@ if (WinCount > 1)
 }
 return
 
-!+`::    ; Last window
-WinGetClass, ActiveClass, A
-WinActivateBottom, ahk_class %ActiveClass%
+!+`::	; Last window
+WinGet ActiveProcess, ProcessName, A
+WinGet WinCount, Count, ahk_exe %ActiveProcess%
+if (WinCount > 1) 
+{
+	; Special handling for explorer windows
+	if (ActiveProcess = "Explorer.EXE") 
+	{
+		WinActivateBottom, ahk_class CabinetWClass
+	}
+	else 
+	{
+		WinActivate, ahk_exe %ActiveProcess%
+	}
+}
+
 return
 
 !+w::
