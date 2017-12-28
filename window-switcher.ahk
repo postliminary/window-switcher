@@ -35,30 +35,44 @@ SetCurrentProgram() {
 	}
 }
 
+; Clear tracked program
+ResetCurrentProgram() {
+	global
+	if (!GetKeyState("Alt", "P")) {
+		SetTimer, ResetCurrentProgram, Off
+		CurrentProcess := ""
+	}
+}
+
+; Performs actual window switch
+SwitchToProgramWindow() {
+	global
+	local CursorID := ProcessArray%ProcessCursor%
+	WinActivate, ahk_id %CursorID%
+	SetTimer, ResetCurrentProgram, 100
+}
+
 ; Next window
 NextProgramWindow() {
 	global
-	local CursorID
 	if (ProcessArray > 1) {
 		ProcessCursor := ProcessCursor + 1
 		if (ProcessCursor > ProcessArray) {
 			ProcessCursor := 1
 		}
-		CursorID := ProcessArray%ProcessCursor%
-		WinActivate, ahk_id %CursorID%
+		SwitchToProgramWindow()
 	}
 }
 
 ; Prev window
 PrevProgramWindow() {
-	local CursorID
+	global
 	if (ProcessArray > 1) {
 		ProcessCursor := ProcessCursor - 1
 		if (ProcessCursor < 1) {
 			ProcessCursor := ProcessArray
 		}
-		CursorID := ProcessArray%ProcessCursor%
-		WinActivate, ahk_id %CursorID%
+		SwitchToProgramWindow()
 	}
 }
 
