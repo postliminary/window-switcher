@@ -18,20 +18,20 @@ Capslock::SendInput {U+00AF}{U+005C}{U+005F}{U+0028}{U+30C4}{U+0029}{U+005F}{U+0
 ; Setup window switching
 SetCurrentProgram() {
 	global
-	local ActiveProcess
+	local ActiveProgram
 	local A
-	WinGet ActiveProcess, ProcessName, A
-	if (ActiveProcess <> CurrentProcess) {
-		if (ActiveProcess = "Explorer.EXE")
+	WinGet ActiveProgram, ProcessName, A
+	if (ActiveProgram <> CurrentProgram) {
+		if (ActiveProgram = "Explorer.EXE")
 		{
-			WinGet, ProcessArray, list, ahk_class CabinetWClass
+			WinGet, ProgramArray, list, ahk_class CabinetWClass
 		}
 		else
 		{
-			WinGet, ProcessArray, list, ahk_exe %ActiveProcess%
+			WinGet, ProgramArray, list, ahk_exe %ActiveProgram%
 		}
-		CurrentProcess := ActiveProcess
-		ProcessCursor := 1
+		CurrentProgram := ActiveProgram
+		ProgramCursor := 1
 	}
 }
 
@@ -40,14 +40,14 @@ ResetCurrentProgram() {
 	global
 	if (!GetKeyState("Alt", "P")) {
 		SetTimer, ResetCurrentProgram, Off
-		CurrentProcess := ""
+		CurrentProgram := ""
 	}
 }
 
 ; Performs actual window switch
 SwitchToProgramWindow() {
 	global
-	local CursorID := ProcessArray%ProcessCursor%
+	local CursorID := ProgramArray%ProgramCursor%
 	WinActivate, ahk_id %CursorID%
 	SetTimer, ResetCurrentProgram, 100
 }
@@ -55,10 +55,10 @@ SwitchToProgramWindow() {
 ; Next window
 NextProgramWindow() {
 	global
-	if (ProcessArray > 1) {
-		ProcessCursor := ProcessCursor + 1
-		if (ProcessCursor > ProcessArray) {
-			ProcessCursor := 1
+	if (ProgramArray > 1) {
+		ProgramCursor := ProgramCursor + 1
+		if (ProgramCursor > ProgramArray) {
+			ProgramCursor := 1
 		}
 		SwitchToProgramWindow()
 	}
@@ -67,10 +67,10 @@ NextProgramWindow() {
 ; Prev window
 PrevProgramWindow() {
 	global
-	if (ProcessArray > 1) {
-		ProcessCursor := ProcessCursor - 1
-		if (ProcessCursor < 1) {
-			ProcessCursor := ProcessArray
+	if (ProgramArray > 1) {
+		ProgramCursor := ProgramCursor - 1
+		if (ProgramCursor < 1) {
+			ProgramCursor := ProgramArray
 		}
 		SwitchToProgramWindow()
 	}
