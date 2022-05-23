@@ -1,5 +1,5 @@
-Media Keys
-==========
+Window Switcher
+===============
 
 [AutoHotkey] script to switch between windows of the same application on the same monitor. 
 
