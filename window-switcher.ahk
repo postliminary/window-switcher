@@ -1,55 +1,37 @@
 ; Only works if running as admin. AHK can't interact with admin windows unless it is running as admin...
-if not A_IsAdmin
-{
-	try
-	{
+if not A_IsAdmin {
+	try {
 		Run *RunAs "%A_ScriptFullPath%"
 	}
 	ExitApp
 }
 
-; Disable CapsLock default function
-SetCapsLockState, AlwaysOff
-
-; Remap CapsLock to send kaomojis
-Capslock::SendInput {U+00AF}{U+005C}{U+005F}{U+0028}{U+30C4}{U+0029}{U+005F}{U+002F}{U+00AF}
-!Capslock::SendInput {U+0CA0}{U+005F}{U+0CA0}
+; Retrieves the display monitor that has the largest area of intersection with a specified window
+; https://www.autohotkey.com/boards/viewtopic.php?f=6&t=4606
+DisplayFromHWND(HWND) {
+   Return DllCall("User32.dll\MonitorFromWindow", "Ptr", HWND, "UInt", 0, "UPtr")
+}
 
 ; Setup window switching
 SetCurrentProgram() {
 	global
-	local ActiveProgram
 	local A
+	local ActiveProgram
+	local ActiveDisplay
 	WinGet ActiveProgram, ProcessName, A
-	if (ActiveProgram <> CurrentProgram) {
-		if (ActiveProgram = "Explorer.EXE")
-		{
+	WinGet, ActiveID, ID, A
+	ActiveDisplay := DisplayFromHWND(ActiveID)
+	if (ActiveProgram <> CurrentProgram Or ActiveDisplay <> CurrentDisplay) {
+		if (ActiveProgram = "Explorer.EXE") {
 			WinGet, ProgramArray, list, ahk_class CabinetWClass
 		}
-		else
-		{
+		else {
 			WinGet, ProgramArray, list, ahk_exe %ActiveProgram%
 		}
 		CurrentProgram := ActiveProgram
+		CurrentDisplay := ActiveDisplay
 		ProgramCursor := 1
 	}
-}
-
-; Clear tracked program
-ResetCurrentProgram() {
-	global
-	if (!GetKeyState("Alt", "P")) {
-		SetTimer, ResetCurrentProgram, Off
-		CurrentProgram := ""
-	}
-}
-
-; Performs actual window switch
-SwitchToProgramWindow() {
-	global
-	local CursorID := ProgramArray%ProgramCursor%
-	WinActivate, ahk_id %CursorID%
-	SetTimer, ResetCurrentProgram, 100
 }
 
 ; Next window
@@ -60,7 +42,14 @@ NextProgramWindow() {
 		if (ProgramCursor > ProgramArray) {
 			ProgramCursor := 1
 		}
-		SwitchToProgramWindow()
+		local CursorID := ProgramArray%ProgramCursor%
+		local CursorDisplay := DisplayFromHWND(CursorID)
+		if (CurrentDisplay = CursorDisplay) {
+			WinActivate, ahk_id %CursorID%
+		}
+		else {
+			NextProgramWindow()
+		}
 	}
 }
 
@@ -72,7 +61,14 @@ PrevProgramWindow() {
 		if (ProgramCursor < 1) {
 			ProgramCursor := ProgramArray
 		}
-		SwitchToProgramWindow()
+		local CursorID := ProgramArray%ProgramCursor%
+		local CursorDisplay := DisplayFromHWND(CursorID)
+		if (CurrentDisplay = CursorDisplay) {
+			WinActivate, ahk_id %CursorID%
+		}
+		else {
+			PrevProgramWindow()
+		}
 	}
 }
 

@@ -1,7 +1,7 @@
 Media Keys
 ==========
 
-[AutoHotkey] script to switch between windows of the same application. 
+[AutoHotkey] script to switch between windows of the same application on the same monitor. 
 
 Usage
 -----
@@ -11,15 +11,6 @@ Usage
 ``Alt + Shift + ` `` Cycles through windows in reverse order
 
 _Use the AutoHotKey utility to convert to an exe._
-
-Bonus
------
-
-Caps lock is now useful (and default behavior is disabled)!
-
-`Capslock` is remapped to `¯\_(ツ)_/¯`
-
-`Alt + Capslock` is remapped to `ಠ_ಠ`
 
 License
 -------
